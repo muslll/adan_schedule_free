@@ -30,7 +30,7 @@ xychart-beta
 Released under [Apache 2.0](https://github.com/muslll/adan_schedule_free/license). Code adapted from official repositories [Adan](https://github.com/sail-sg/Adan) and [Schedule-Free](https://github.com/facebookresearch/schedule_free).
 
 Original research papers:
-```tex
+```bibtex
 
 @article{xie2022adan,
   title={Adan: Adaptive Nesterov Momentum Algorithm for Faster Optimizing Deep Models},
