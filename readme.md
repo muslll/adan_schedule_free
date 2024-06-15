@@ -36,9 +36,10 @@ Original research papers:
   title={Adan: Adaptive Nesterov Momentum Algorithm for Faster Optimizing Deep Models},
   author={Xie, Xingyu and Zhou, Pan and Li, Huan and Lin, Zhouchen and Yan, Shuicheng},
   journal={arXiv preprint arXiv:2208.06677},
+  eprint={2208.06677},
   year={2022},
   archivePrefix={arXiv},
-  primaryClass={cs.LG}
+  primaryClass={cs.LG},
   url={https://arxiv.org/abs/2208.06677}
 }
 
@@ -46,10 +47,10 @@ Original research papers:
   title={The Road Less Scheduled},
   author={Aaron Defazio and Xingyu Yang and Harsh Mehta and Konstantin Mishchenko and Ahmed Khaled and Ashok Cutkosky},
   journal={arXiv preprint arXiv:2405.15682},
-  eprint={2405.15682}
+  eprint={2405.15682},
   year={2024},
   archivePrefix={arXiv},
-  primaryClass={cs.LG}
+  primaryClass={cs.LG},
   url={https://arxiv.org/abs/2405.15682}
 }
 ```
