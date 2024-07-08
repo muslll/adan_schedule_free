@@ -1,4 +1,5 @@
 import math
+from collections.abc import Callable, Iterable
 
 import torch
 from torch import Tensor
@@ -6,19 +7,19 @@ from torch.optim.optimizer import Optimizer
 
 
 class adan_sf(Optimizer):
-    """
-    Unofficial adaptation of Schedule-Free to the Adan optimizer:
+    """Unofficial adaptation of Schedule-Free to the Adan optimizer:
         https://arxiv.org/abs/2405.15682
-        https://arxiv.org/abs/2208.06677
+        https://arxiv.org/abs/2208.06677.
 
     This optimizer requires that .train() and .eval() be called before the
     beginning of training and evaluation respectively. The optimizer should
     also be placed in eval mode when saving checkpoints.
 
     Arguments:
+    ---------
         params (iterable): iterable of parameters to optimize or
             dicts defining parameter groups.
-        lr (float, optional): learning rate. (default: 8e-4)
+        lr (float, optional): learning rate. (default: 1.6e-3)
         betas (Tuple[float, float, float], optional): coefficients used for
             first- and second-order moments. (default: (0.98, 0.92, 0.9955))
         eps (float, optional): term added to the denominator to improve
@@ -34,13 +35,14 @@ class adan_sf(Optimizer):
             be equal to lr raised to this power. Set to 0 for no weighting
             (default: 2.0).
         schedule_free (bool): Whether to enable Schedule-Free (default: True)
+
     """
 
     def __init__(
         self,
-        params,
-        lr: float = 8e-4,
-        betas: list[float] = [0.98, 0.92, 0.987],
+        params: Iterable[Tensor],
+        lr: float = 1.6e-3,
+        betas: tuple[float, float, float] = (0.98, 0.92, 0.987),
         eps: float = 1e-8,
         weight_decay: float = 0.02,
         max_grad_norm: float = 0.0,
@@ -48,8 +50,8 @@ class adan_sf(Optimizer):
         r: float = 0.0,
         weight_lr_power: float = 2.0,
         schedule_free: bool = True,
-        **kwargs,
-    ):
+        **kwargs,  # noqa: ARG002
+    ) -> None:
         if not max_grad_norm >= 0.0:
             msg = f"Invalid Max grad norm: {max_grad_norm}"
             raise ValueError(msg)
@@ -85,13 +87,13 @@ class adan_sf(Optimizer):
         }
         super().__init__(params, defaults)
 
-    def __setstate__(self, state):
+    def __setstate__(self, state) -> None:
         super().__setstate__(state)
         for group in self.param_groups:
             group.setdefault("schedule_free", True)
 
     @torch.no_grad()
-    def restart_opt(self):
+    def restart_opt(self) -> None:
         for group in self.param_groups:
             group["step"] = 0
             for p in group["params"]:
@@ -107,7 +109,7 @@ class adan_sf(Optimizer):
                     state["exp_avg_diff"] = torch.zeros_like(p)
 
     @torch.no_grad()
-    def eval(self):
+    def eval(self) -> None:
         for group in self.param_groups:
             train_mode = group["train_mode"]
             beta1, _, _ = group["betas"]
@@ -120,7 +122,7 @@ class adan_sf(Optimizer):
                 group["train_mode"] = False
 
     @torch.no_grad()
-    def train(self):
+    def train(self) -> None:
         for group in self.param_groups:
             train_mode = group["train_mode"]
             beta1, _, _ = group["betas"]
@@ -133,9 +135,8 @@ class adan_sf(Optimizer):
                 group["train_mode"] = True
 
     @torch.no_grad()
-    def step(self, closure=None):
+    def step(self, closure: Callable | None = None):
         """Performs a single optimization step."""
-
         loss = None
         if closure is not None:
             with torch.enable_grad():
@@ -206,7 +207,7 @@ class adan_sf(Optimizer):
 
                 if not group["train_mode"]:
                     msg = "Not in train mode!"
-                    raise Exception(msg)
+                    raise ValueError(msg)
             else:
                 ckp1 = None
 
@@ -283,7 +284,7 @@ def _multi_tensor_adan(
     eps: float,
     schedule_free: bool,
     clip_global_grad_norm: Tensor,
-):
+) -> None:
     if len(params) == 0:
         return
 
